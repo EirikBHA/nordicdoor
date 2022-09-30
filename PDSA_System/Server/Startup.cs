@@ -29,6 +29,7 @@ namespace PDSA_System.Server
              Helper.cs bruker interfasen IDisposable som vil si at tjenesten er lett og kort levetid.
              */
             services.AddTransient<DbHelper>(_ => new DbHelper(Configuration["ConnectionStrings:DefaultConnectionString"]));
+
         } 
     }
 }

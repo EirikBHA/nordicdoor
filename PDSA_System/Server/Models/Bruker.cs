@@ -20,9 +20,13 @@ namespace PDSA_System.Server.Models
          */
 
 
-        public Bruker()
+        public Bruker(int BrukerId, string Navn,string Email, string PassordHash, string Rolle)
         {
-            
+            this.BrukerId = BrukerId;
+            this.Navn = Navn;
+            this.Email = Email;
+            this.PassordHash = PassordHash;
+            this.Rolle = Rolle;
         }
 
 

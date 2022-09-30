@@ -7,9 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
     <PackageReference Include="MySql.Data" Version="8.0.30" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="System.Web.Http.Common" Version="4.0.20126.16343" />
   </ItemGroup>
 
   <ItemGroup>
