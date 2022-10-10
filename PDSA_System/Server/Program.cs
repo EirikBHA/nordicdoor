@@ -1,4 +1,7 @@
-﻿using PDSA_System.Server.Models;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using PDSA_System.Server.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +10,26 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSwaggerGen();
+//Legger til autentisering skjemaer for JWT
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(o =>
+{ //gir parametre for tokens
+    o.TokenValidationParameters = new TokenValidationParameters
+    {
+        //ValidateIssuer = true,
+        //ValidateAudience = true,
+        //ValidIssuer = "http://localhost:5000",
+        //ValidAudience = "http://localhost:5000",
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ED02457B5C41D964DBD2F2A609D63FE1BB7528DBE55E1ABF5B52C249CD735797")),
 
+    };
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -26,6 +48,7 @@ else
 }
 
 app.UseHttpsRedirection();
+app.MapGet("/ping2", () => "Hello World!").RequireAuthorization();
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
@@ -36,6 +59,9 @@ app.UseRouting();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+//bruker autentisering og autorisering
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();
 
