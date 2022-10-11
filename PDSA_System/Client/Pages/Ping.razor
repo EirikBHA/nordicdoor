@@ -1,0 +1,41 @@
+@page "/ping";
+@inject HttpClient Http
+@inject IJSRuntime jsr
+@using Blazored.LocalStorage
+<h3>Ping: Proof of concept</h3>
+
+<p id="responseData"></p>
+
+<button id="request">Send request</button>
+
+@code {
+    private ILocalStorageService _localStorageService;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        try
+        {
+            var requestMsg = new HttpRequestMessage(HttpMethod.Get, "/api/ping");
+            requestMsg.Headers.Add("token", "Bearer " + await _localStorageService.GetItemAsStringAsync("yey"));
+            var response = await Http.SendAsync(requestMsg);
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) // NOTE: THEN TOKEN HAS EXPIRED
+            {
+                await jsr.InvokeVoidAsync("localStorage.removeItem", "user").ConfigureAwait(false);
+                //userdata = null;
+            }
+            /*
+            else if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                //token = null;
+            else if (response.IsSuccessStatusCode)
+                //token = await response.Content.ReadFromJsonAsync<List<>>();
+                */
+        }
+        catch (Exception ex)
+        {
+            Console.Write(ex);
+            Console.WriteLine("Nu skjedde no gæli her");
+        }
+    }
+
+}

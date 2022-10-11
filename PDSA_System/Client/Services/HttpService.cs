@@ -2,12 +2,19 @@ using Microsoft.AspNetCore.Components;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 using Blazored.LocalStorage;
 
 
 namespace PDSA_System.Client.Services;
 
-public class HttpService
+public interface IHttpService
+{
+    Task<T> Get<T>(string uri);
+    Task<T> Post<T>(string uri, object value);
+}
+public class HttpService : IHttpService
 {
     private HttpClient _httpClient;
     private NavigationManager _navigationManager;
@@ -26,6 +33,23 @@ public class HttpService
         _configuration = configuration;
     }
 
+    public async Task<T> Get<T>(string uri)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, uri);
+        Console.WriteLine("Giflar");
+        return await sendRequest<T>(request);
+
+    }
+
+    public async Task<T> Post<T>(string uri, object value)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, uri);
+        request.Content = new StringContent(JsonSerializer.Serialize(value), Encoding.UTF8, "application/json");
+        Console.WriteLine("Wallahi");
+        return await sendRequest<T>(request);
+
+    }
+
     private async Task<T> sendRequest<T>(HttpRequestMessage request)
     {
         // add jwt auth header if user is logged in and request is to the api url
@@ -35,18 +59,21 @@ public class HttpService
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         using var response = await _httpClient.SendAsync(request);
+        Console.WriteLine("Wallah");
 
         // auto logout on 401 response
         if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
             //_navigationManager.NavigateTo("logout");
             Console.WriteLine(HttpStatusCode.Unauthorized.ToString());
+            Console.WriteLine("KAKE");
         }
 
         // throw exception on error response
         if (!response.IsSuccessStatusCode)
         {
             var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+            Console.WriteLine("Taffel");
             throw new Exception(error["message"]);
         }
 

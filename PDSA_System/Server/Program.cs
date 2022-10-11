@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using PDSA_System.Client.Services;
 using PDSA_System.Server.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient<IHttpService, HttpService>();
 
 //Legger til autentisering skjemaer for JWT, og gir parametre for tokens
 builder.Services.AddAuthentication(options =>
