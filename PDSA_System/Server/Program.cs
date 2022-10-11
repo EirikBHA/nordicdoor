@@ -10,22 +10,23 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSwaggerGen();
-//Legger til autentisering skjemaer for JWT
+
+//Legger til autentisering skjemaer for JWT, og gir parametre for tokens
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(o =>
-{ //gir parametre for tokens
+{
     o.TokenValidationParameters = new TokenValidationParameters
     {
-        //ValidateIssuer = true,
-        //ValidateAudience = true,
-        //ValidIssuer = "http://localhost:5000",
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        //ValidIssuer = "http://localhost:5000", trenger ikke dette enda
         //ValidAudience = "http://localhost:5000",
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
+        //ValidateLifetime = true,
+        ValidateIssuerSigningKey = false, //sett til false hvis ting ikke funker
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ED02457B5C41D964DBD2F2A609D63FE1BB7528DBE55E1ABF5B52C249CD735797")),
 
     };
@@ -59,6 +60,7 @@ app.UseRouting();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+
 //bruker autentisering og autorisering
 app.UseAuthentication();
 app.UseAuthorization();
